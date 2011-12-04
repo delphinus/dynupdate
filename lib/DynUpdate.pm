@@ -7,8 +7,10 @@ use LWP::UserAgent;
 use Path::Class;
 use URI;
 
+our $VERSION = '0.1.2011120401';
+
 has agent      => (is => 'ro',
-	default    => 'delphinus@remora.cx - dynUpdate.pl - 1.0');
+	default    => "delphinus\@remora.cx - dynUpdate.pl - $VERSION");
 has detect_uri => (is => 'ro', default    => 'http://checkip.dyndns.org/');
 
 has scheme     => (is => 'ro', default    => 'https');
@@ -18,33 +20,19 @@ has method     => (is => 'ro', default    => 'GET');
 has protocol   => (is => 'ro', default    => 'HTTP/1.0');
 has uri        => (is => 'ro', lazy_build => 1);
 
-has my_ip      => (is => 'rw', default    => '');
-
-has username   => (is => 'ro', required   => 1);
-has password   => (is => 'ro', required   => 1);
-has hostname   => (is => 'ro', required   => 1);
-has wildcard   => (is => 'ro', default    => 'NOCHG');
-has mx         => (is => 'ro', default    => 'NOCHG');
-has backmx     => (is => 'ro', default    => 'NOCHG');
+has username   => (is => 'ro', isa => 'Str', required   => 1);
+has password   => (is => 'ro', isa => 'Str', required   => 1);
+has hostname   => (is => 'ro', isa => 'Str', required   => 1);
+has wildcard   => (is => 'ro', isa => 'Str', default    => 'NOCHG');
+has mx         => (is => 'ro', isa => 'Str', default    => 'NOCHG');
+has backmx     => (is => 'ro', isa => 'Str', default    => 'NOCHG');
 
 sub run { my $self = shift;
-	if ($self->detect) {
-		$self->log('Changed', 'ip address need to be updated.');
-		$self->update;
-	} else {
-		$self->log('Unchanged', 'ip address has not changed.');
-	}
-}
-
-sub detect { my $self = shift;
-	my $old = $self->my_ip;
-	$self->my_ip($self->_get_my_ip);
-
-	return $old ne $self->my_ip
+	return $self->update;
 }
 
 sub update { my $self = shift;
-	my $ua = $self->_get_ua();
+	my $ua = $self->get_ua();
 
 	my $req = HTTP::Request->new;
 	$req->method($self->method);
@@ -58,11 +46,21 @@ sub update { my $self = shift;
 	$res->is_success or $self->_die($res->status_line);
 
 	my $content = $res->content;
-	if ($content eq 'good') {
+
+	my ($status, $ip_address) = $content =~ /(\w+)(?: (\d+\.\d+\.\d+\.\d+))?/;
+
+	if ($status eq 'good') {
 		$self->log('Success',
-			"ip address has been updated successfully. => $content");
+			"ip address has been updated successfully. => $ip_address");
+		return 1;
+
+	} elsif ($status eq 'nochg') {
+		$self->log('Success', 'ip address does not need to be updated.');
+		return 1;
+
 	} else {
-		$self->log('Failed', "ip address update failed. => $content");
+		$self->log('Failed', "ip address update failed. => '$content'");
+		return 0;
 	}
 }
 
@@ -73,7 +71,7 @@ sub _build_uri { my $self = shift;
 	$uri->path($self->path);
 	$uri->query_form(
 		hostname => $self->hostname,
-		myip     => $self->my_ip,
+		myip     => $self->get_my_ip,
 		wildcard => $self->wildcard,
 		mx       => $self->mx,
 		backmx   => $self->backmx,
@@ -82,8 +80,8 @@ sub _build_uri { my $self = shift;
 	return $uri;
 }
 
-sub _get_my_ip { my $self = shift;
-	my $ua = $self->_get_ua();
+sub get_my_ip { my $self = shift;
+	my $ua = $self->get_ua();
 	my $res = $ua->get($self->detect_uri);
 	$res->is_success or $self->_die($res->status_line);
 
@@ -94,7 +92,7 @@ sub _get_my_ip { my $self = shift;
 	return $ip_address;
 }
 
-sub _get_ua { my $self = shift;
+sub get_ua { my $self = shift;
 	my $ua = LWP::UserAgent->new;
 	$ua->env_proxy;
 	$ua->agent($self->agent);
