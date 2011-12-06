@@ -25,19 +25,10 @@ has log_file   => (is => 'ro', isa => File, coerce => File, default    => sub {
 
 has my_ip      => (is => 'rw', isa => ip4, default    => '0.0.0.0');
 
-has default_interval => (is => 'ro', default => 60);
-has large_interval => (is => 'ro', default => 3600);
-has fail_count => (traits => ['Counter'], is => 'ro', default => 0, handles => {
-		inc_fail_count => 'inc',
-		reset_fail_count => 'reset',
-	});
+has interval => (is => 'ro', default => 60);
 
 sub BUILD { my $self = shift;
 	-d $self->pidbase or $self->pidbase->mkpath;
-}
-
-sub _build_interval { my $self = shift;
-	return $self->default_interval;
 }
 
 after start => sub { my $self = shift;
@@ -49,17 +40,8 @@ after start => sub { my $self = shift;
 
 override run => sub { my $self = shift;
 	while (1) {
-		my $res = super;
-
-		if ($res) {
-			$self->reset_fail_count;
-			sleep $self->interval;
-
-		} else {
-			$self->inc_fail_count;
-			sleep $self->fail_count >= 10
-				? $self->large_interval : $self->interval;
-		}
+		super;
+		sleep $self->interval;
 	}
 };
 
