@@ -11,8 +11,6 @@ our $VERSION = '0.4.2011123101';
 
 has agent      => (is => 'ro',
 	default    => "delphinus\@remora.cx - dynUpdate.pl - $VERSION");
-has detect_uri => (is => 'ro', isa => 'Str',
-	default    => 'http://checkip.dyndns.org/');
 
 has scheme     => (is => 'ro', default    => 'https');
 has host       => (is => 'ro', default    => 'members.dyndns.org');
@@ -27,6 +25,8 @@ has hostname   => (is => 'ro', isa => 'Str', required   => 1);
 has wildcard   => (is => 'ro', isa => 'Str', default    => 'NOCHG');
 has mx         => (is => 'ro', isa => 'Str', default    => 'NOCHG');
 has backmx     => (is => 'ro', isa => 'Str', default    => 'NOCHG');
+has detect_uri => (is => 'ro', isa => 'Str',
+	default    => 'http://checkip.dyndns.org/');
 
 sub run { my $self = shift;
 	return $self->update;

@@ -10,6 +10,8 @@ use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
 
+our $VERSION = '0.4.2011123101';
+
 has [qw!
 	+ignore_zombies   +no_double_fork   +progname               +basedir
 	+stop_timeout     +pidfile          +dont_close_all_files   +agent
@@ -17,13 +19,13 @@ has [qw!
 	+protocol         +uri
 !] => (metaclass => 'NoGetopt');
 
-has log_file   => (is => 'ro', isa => File, coerce => File, default    => sub {
+has log_file => (is => 'ro', isa => File, coerce => File, default    => sub {
 		my $name = fileparse($0, qr!\.[^.]*!);
 
 		return "$Bin/logs/$name.log";
 	});
 
-has my_ip      => (is => 'rw', isa => ip4, default    => '0.0.0.0');
+has my_ip    => (is => 'rw', isa => ip4, default => '0.0.0.0');
 
 has interval => (is => 'ro', isa => 'Int', default => 900);
 
