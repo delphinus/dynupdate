@@ -13,8 +13,8 @@ use HTTP::Date qw!time2iso!;
 has [qw!
 	+ignore_zombies   +no_double_fork   +progname               +basedir
 	+stop_timeout     +pidfile          +dont_close_all_files   +agent
-	+detect_uri       +scheme           +host                   +path
-	+method           +protocol         +uri
+	+scheme           +host             +path                   +method
+	+protocol         +uri
 !] => (metaclass => 'NoGetopt');
 
 has log_file   => (is => 'ro', isa => File, coerce => File, default    => sub {
