@@ -7,7 +7,7 @@ use LWP::UserAgent;
 use Path::Class;
 use URI;
 
-our $VERSION = '0.1.2011120401';
+our $VERSION = '0.4.2011123101';
 
 has agent      => (is => 'ro',
 	default    => "delphinus\@remora.cx - dynUpdate.pl - $VERSION");
