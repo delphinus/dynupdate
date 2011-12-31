@@ -11,7 +11,8 @@ our $VERSION = '0.4.2011123101';
 
 has agent      => (is => 'ro',
 	default    => "delphinus\@remora.cx - dynUpdate.pl - $VERSION");
-has detect_uri => (is => 'ro', default    => 'http://checkip.dyndns.org/');
+has detect_uri => (is => 'ro', isa => 'Str',
+	default    => 'http://checkip.dyndns.org/');
 
 has scheme     => (is => 'ro', default    => 'https');
 has host       => (is => 'ro', default    => 'members.dyndns.org');
