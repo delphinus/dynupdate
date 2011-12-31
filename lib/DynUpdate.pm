@@ -7,11 +7,10 @@ use LWP::UserAgent;
 use Path::Class;
 use URI;
 
-our $VERSION = '0.1.2011120401';
+our $VERSION = '0.4.2011123101';
 
 has agent      => (is => 'ro',
 	default    => "delphinus\@remora.cx - dynUpdate.pl - $VERSION");
-has detect_uri => (is => 'ro', default    => 'http://checkip.dyndns.org/');
 
 has scheme     => (is => 'ro', default    => 'https');
 has host       => (is => 'ro', default    => 'members.dyndns.org');
@@ -26,6 +25,8 @@ has hostname   => (is => 'ro', isa => 'Str', required   => 1);
 has wildcard   => (is => 'ro', isa => 'Str', default    => 'NOCHG');
 has mx         => (is => 'ro', isa => 'Str', default    => 'NOCHG');
 has backmx     => (is => 'ro', isa => 'Str', default    => 'NOCHG');
+has detect_uri => (is => 'ro', isa => 'Str',
+	default    => 'http://checkip.dyndns.org/');
 
 sub run { my $self = shift;
 	return $self->update;
@@ -43,7 +44,7 @@ sub update { my $self = shift;
 	$req->authorization_basic($self->username, $self->password);
 
 	my $res = $ua->request($req);
-	$res->is_success or $self->_die($res->status_line);
+	$res->is_success or return $self->_die($res->status_line);
 
 	my $content = $res->content;
 
@@ -83,11 +84,11 @@ sub _build_uri { my $self = shift;
 sub get_my_ip { my $self = shift;
 	my $ua = $self->get_ua();
 	my $res = $ua->get($self->detect_uri);
-	$res->is_success or $self->_die($res->status_line);
+	$res->is_success or return $self->_die($res->status_line);
 
 	my ($ip_address) = $res->content =~
 		m!Current IP Address: (\d+\.\d+\.\d+\.\d+)!;
-	defined $ip_address or $self->_die($res->estatus_line);
+	defined $ip_address or return $self->_die($res->status_line);
 
 	return $ip_address;
 }
