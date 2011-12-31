@@ -43,7 +43,7 @@ sub update { my $self = shift;
 	$req->authorization_basic($self->username, $self->password);
 
 	my $res = $ua->request($req);
-	$res->is_success or $self->_die($res->status_line);
+	$res->is_success or return $self->_die($res->status_line);
 
 	my $content = $res->content;
 
@@ -83,11 +83,11 @@ sub _build_uri { my $self = shift;
 sub get_my_ip { my $self = shift;
 	my $ua = $self->get_ua();
 	my $res = $ua->get($self->detect_uri);
-	$res->is_success or $self->_die($res->status_line);
+	$res->is_success or return $self->_die($res->status_line);
 
 	my ($ip_address) = $res->content =~
 		m!Current IP Address: (\d+\.\d+\.\d+\.\d+)!;
-	defined $ip_address or $self->_die($res->estatus_line);
+	defined $ip_address or return $self->_die($res->estatus_line);
 
 	return $ip_address;
 }

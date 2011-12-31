@@ -25,7 +25,7 @@ has log_file   => (is => 'ro', isa => File, coerce => File, default    => sub {
 
 has my_ip      => (is => 'rw', isa => ip4, default    => '0.0.0.0');
 
-has interval => (is => 'ro', default => 60);
+has interval => (is => 'ro', default => 600);
 
 sub BUILD { my $self = shift;
 	-d $self->pidbase or $self->pidbase->mkpath;

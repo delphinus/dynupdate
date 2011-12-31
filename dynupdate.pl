@@ -9,6 +9,7 @@ my $daemon = DynUpdate::Daemon->new_with_options(
 	username => 'username',
 	password => 'password',
 	hostname => 'myhost',
+	interval => 600,
 	pidbase  => "$Bin/run",
 );
 
