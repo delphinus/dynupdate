@@ -1,0 +1,6 @@
+Dyn.com アップデートスクリプト
+==============================
+ダイナミック DNS サービス [Dyn.com][dyn.com] の IP アドレスを定期的に監視し、ルータの再起動などで IP アドレスが変わったときに
+
+[dyn.com]: http://dyn.com/ "Managed DNS | Email Delivery | SMTP | Domain Registration"
+

@@ -7,7 +7,7 @@ use LWP::UserAgent;
 use Path::Class;
 use URI;
 
-our $VERSION = '0.4.2011123101';
+our $VERSION = '0.4.2012010101';
 
 has agent      => (is => 'ro',
     default    => "delphinus\@remora.cx - dynupdate.pl - $VERSION");
@@ -19,31 +19,32 @@ has method     => (is => 'ro', default    => 'GET');
 has protocol   => (is => 'ro', default    => 'HTTP/1.0');
 has uri        => (is => 'ro', lazy_build => 1);
 
-has username   => (is => 'ro', isa => 'Str', required   => 1);
-has password   => (is => 'ro', isa => 'Str', required   => 1);
-has hostname   => (is => 'ro', isa => 'Str', required   => 1);
-has wildcard   => (is => 'ro', isa => 'Str', default    => 'NOCHG');
-has mx         => (is => 'ro', isa => 'Str', default    => 'NOCHG');
-has backmx     => (is => 'ro', isa => 'Str', default    => 'NOCHG');
+has username   => (is => 'ro', isa => 'Str', required => 1);
+has password   => (is => 'ro', isa => 'Str', required => 1);
+has hostname   => (is => 'ro', isa => 'Str', required => 1);
+has wildcard   => (is => 'ro', isa => 'Str', default  => 'NOCHG');
+has mx         => (is => 'ro', isa => 'Str', default  => 'NOCHG');
+has backmx     => (is => 'ro', isa => 'Str', default  => 'NOCHG');
+has offline    => (is => 'ro', isa => 'Str', default  => 'NOCHG');
 has detect_uri => (is => 'ro', isa => 'Str',
     default    => 'http://checkip.dyndns.org/');
+
+has debug      => (is => 'ro', isa => 'Bool', default => 0);
 
 sub run { my $self = shift;
     return $self->update;
 }
 
 sub update { my $self = shift;
-    my $ua = $self->get_ua();
-
     my $req = HTTP::Request->new;
     $req->method($self->method);
     $req->uri($self->uri);
     $req->protocol($self->protocol);
     $req->header(Host => $self->host);
-    $req->header('User-Agent' => $ua->agent);
+    $req->header('User-Agent' => $self->ua->agent);
     $req->authorization_basic($self->username, $self->password);
 
-    my $res = $ua->request($req);
+    my $res = $self->ua->request($req);
     $res->is_success or return $self->_die($res->status_line);
 
     my $content = $res->content;
@@ -51,16 +52,16 @@ sub update { my $self = shift;
     my ($status, $ip_address) = $content =~ /(\w+)(?: (\d+\.\d+\.\d+\.\d+))?/;
 
     if ($status eq 'good') {
-        $self->log('Success',
+        $self->log(Success =>
             "ip address has been updated successfully. => $ip_address");
         return 1;
 
     } elsif ($status eq 'nochg') {
-        $self->log('Success', 'ip address does not need to be updated.');
+        $self->log(Success => 'ip address does not need to be updated.');
         return 1;
 
     } else {
-        $self->log('Failed', "ip address update failed. => '$content'");
+        $self->log(Failed => "ip address update failed. => '$content'");
         return 0;
     }
 }
@@ -76,15 +77,19 @@ sub _build_uri { my $self = shift;
         wildcard => $self->wildcard,
         mx       => $self->mx,
         backmx   => $self->backmx,
+        offline  => $self->offline,
     );
+
+    $self->debug($uri);
 
     return $uri;
 }
 
 sub get_my_ip { my $self = shift;
-    my $ua = $self->get_ua();
-    my $res = $ua->get($self->detect_uri);
+    my $res = $self->ua->get($self->detect_uri);
     $res->is_success or return $self->_die($res->status_line);
+
+    $self->debug($res->content);
 
     my ($ip_address) = $res->content =~
         m!Current IP Address: (\d+\.\d+\.\d+\.\d+)!;
@@ -93,16 +98,27 @@ sub get_my_ip { my $self = shift;
     return $ip_address;
 }
 
-sub get_ua { my $self = shift;
-    my $ua = LWP::UserAgent->new;
-    $ua->env_proxy;
-    $ua->agent($self->agent);
-
-    return $ua;
+*lwp = _lwp();
+sub _lwp {
+    my $lwp;
+    return sub { my $self = shift;
+        unless ($lwp) {
+            $lwp = LWP::UserAgent->new;
+            $ua->env_proxy;
+            $ua->agent($self->agent);
+            $self->debug('LWP instance created');
+        }
+        return $ua;
+    };
 }
 
 sub _die { my $self = shift;
-    $self->log('Error', shift);
+    $self->log(Error => shift);
+}
+
+sub debug { my ($self, $msg) = @_;
+    $self->debug or return;
+    $self->log(Debug => $msg);
 }
 
 sub log { my $self = shift;
