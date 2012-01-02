@@ -135,14 +135,14 @@ has log_file      => (
         return "$Bin/logs/$name.log";
     });
 
-sub log { my $self = shift;
     use YAML;
+use feature qw!say!;
+sub log { my $self = shift;
     say Dump $self->log_fh;
     $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
 }
 
 *log_fh = _log_fh();
-use feature qw!say!;
 sub _log_fh {
     say 1;
     my $fh;
