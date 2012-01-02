@@ -100,6 +100,7 @@ sub _log_fh {
         unless ($fh) {
             -d $self->log_file->parent or $self->log_file->parent->mkpath;
             open $fh, '>>', $self->log_file or die;
+            $fh->autoflush(1);
         }
         return $fh;
     };
