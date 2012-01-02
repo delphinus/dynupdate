@@ -140,6 +140,7 @@ sub log { my $self = shift;
 }
 
 *log_fh = _log_fh();
+use feature qw!say!;
 sub _log_fh {
     say 1;
     my $fh;
