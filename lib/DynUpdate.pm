@@ -125,6 +125,15 @@ sub debug { my ($self, $msg) = @_;
 #printf "%s [%s] %s\n", time2iso(time), @_;
 #}
 
+use FindBin qw!$Bin!;
+use MooseX::Type::Path::Class qw!File!;
+has log_file      => (
+    is => 'ro', isa => File, coerce => File,
+    default       => sub {
+        my $name = fileparse($0, qr!\.[^.]*!);
+        return "$Bin/logs/$name.log";
+    });
+
 sub log { my $self = shift;
     $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
 }
