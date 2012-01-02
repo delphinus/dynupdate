@@ -141,12 +141,19 @@ sub log { my $self = shift;
 
 *log_fh = _log_fh();
 sub _log_fh {
+    say 1;
     my $fh;
+    say 2;
     return sub { my $self = shift;
+    say 3;
         unless ($fh) {
+    say 4;
             -d $self->log_file->parent or $self->log_file->parent->mkpath;
+    say 5;
             open my $fh, '>>', $self->log_file or die;
+    say 6;
         }
+    say 7;
         return $fh;
     };
 }
