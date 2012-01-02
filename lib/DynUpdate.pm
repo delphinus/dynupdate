@@ -6,8 +6,9 @@ use HTTP::Request;
 use LWP::UserAgent;
 use Path::Class;
 use URI;
+use YAML qw!Dump!;
 
-our $VERSION = '0.4.2012010101';
+our $VERSION = '0.4.2012010201';
 
 has agent      => (is => 'ro',
     default    => "delphinus\@remora.cx - dynupdate.pl - $VERSION");
@@ -17,7 +18,6 @@ has host       => (is => 'ro', default    => 'members.dyndns.org');
 has path       => (is => 'ro', default    => '/nic/update');
 has method     => (is => 'ro', default    => 'GET');
 has protocol   => (is => 'ro', default    => 'HTTP/1.0');
-has uri        => (is => 'ro', lazy_build => 1);
 
 has username   => (is => 'ro', isa => 'Str', required => 1);
 has password   => (is => 'ro', isa => 'Str', required => 1);
@@ -36,13 +36,30 @@ sub run { my $self = shift;
 }
 
 sub update { my $self = shift;
+    my $uri = URI->new;
+    $uri->scheme($self->scheme);
+    $uri->host($self->host);
+    $uri->path($self->path);
+    $uri->query_form(
+        hostname => $self->hostname,
+        myip     => $self->get_my_ip,
+        wildcard => $self->wildcard,
+        mx       => $self->mx,
+        backmx   => $self->backmx,
+        offline  => $self->offline,
+    );
+
+    $self->debug($uri);
+
     my $req = HTTP::Request->new;
     $req->method($self->method);
-    $req->uri($self->uri);
+    $req->uri($uri);
     $req->protocol($self->protocol);
     $req->header(Host => $self->host);
     $req->header('User-Agent' => $self->lwp->agent);
     $req->authorization_basic($self->username, $self->password);
+
+    $self->debug($req);
 
     my $res = $self->lwp->request($req);
     $res->is_success or return $self->_die($res->status_line);
@@ -64,25 +81,6 @@ sub update { my $self = shift;
         $self->log(Failed => "ip address update failed. => '$content'");
         return 0;
     }
-}
-
-sub _build_uri { my $self = shift;
-    my $uri = URI->new;
-    $uri->scheme($self->scheme);
-    $uri->host($self->host);
-    $uri->path($self->path);
-    $uri->query_form(
-        hostname => $self->hostname,
-        myip     => $self->get_my_ip,
-        wildcard => $self->wildcard,
-        mx       => $self->mx,
-        backmx   => $self->backmx,
-        offline  => $self->offline,
-    );
-
-    $self->debug($uri);
-
-    return $uri;
 }
 
 sub get_my_ip { my $self = shift;
@@ -118,6 +116,9 @@ sub _die { my $self = shift;
 
 sub debug { my ($self, $msg) = @_;
     $self->debug_flg or return;
+    if (ref $msg) {
+        $msg = Dump $msg;
+    }
     $self->log(Debug => $msg);
 }
 

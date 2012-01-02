@@ -10,13 +10,13 @@ use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
 
-our $VERSION = '0.4.2012010101';
+our $VERSION = '0.4.2012010201';
 
 has [qw!
     +ignore_zombies +no_double_fork +progname +basedir
     +stop_timeout   +pidfile        +agent    +dont_close_all_files 
     +scheme         +host           +path     +method
-    +protocol       +uri
+    +protocol
 !] => (traits => ['NoGetopt']);
 
 has '+pidbase'    => (documentation => 'path to pidfile dir');
@@ -83,7 +83,7 @@ override update => sub { my $self = shift;
         return 1;
 
     } else {
-        $self->log(Changed => 'ip address need to be updated.');
+        $self->log(Changed => 'ip address needs to be updated.');
         $self->my_ip($new);
         return super;
     }
