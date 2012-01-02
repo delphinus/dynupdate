@@ -159,6 +159,7 @@ sub _log_fh {
     say 6;
         }
     say 7;
+    say $fh;
         return $fh;
     };
 }
