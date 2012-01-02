@@ -118,6 +118,8 @@ sub debug { my ($self, $msg) = @_;
     $self->debug_flg or return;
     if (ref $msg) {
         $msg = Dump $msg;
+    } else {
+        chomp $msg;
     }
     $self->log(Debug => $msg);
 }

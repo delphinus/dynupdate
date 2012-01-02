@@ -38,7 +38,6 @@ has '+offline'    => (traits => ['Getopt'], cmd_aliases => 'o',
     documentation => 'set to offline mode');
 has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
     documentation => 'url for detecting ip address');
-
 has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
 
@@ -51,7 +50,7 @@ has log_file      => (traits => ['Getopt'], cmd_aliases => 'l',
     });
 
 has interval      => (traits => ['Getopt'], cmd_aliases => 'i',
-    documentation => 'interval seconds between updates',
+    documentation => 'interval seconds between checks',
     is => 'ro', isa => 'Int', default => 900);
 
 has my_ip         => (traits => ['NoGetopt'],
