@@ -41,10 +41,10 @@ sub update { my $self = shift;
     $req->uri($self->uri);
     $req->protocol($self->protocol);
     $req->header(Host => $self->host);
-    $req->header('User-Agent' => $self->ua->agent);
+    $req->header('User-Agent' => $self->lwp->agent);
     $req->authorization_basic($self->username, $self->password);
 
-    my $res = $self->ua->request($req);
+    my $res = $self->lwp->request($req);
     $res->is_success or return $self->_die($res->status_line);
 
     my $content = $res->content;
@@ -86,7 +86,7 @@ sub _build_uri { my $self = shift;
 }
 
 sub get_my_ip { my $self = shift;
-    my $res = $self->ua->get($self->detect_uri);
+    my $res = $self->lwp->get($self->detect_uri);
     $res->is_success or return $self->_die($res->status_line);
 
     $self->debug($res->content);
