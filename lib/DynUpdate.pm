@@ -104,11 +104,11 @@ sub _lwp {
     return sub { my $self = shift;
         unless ($lwp) {
             $lwp = LWP::UserAgent->new;
-            $ua->env_proxy;
-            $ua->agent($self->agent);
+            $lwp->env_proxy;
+            $lwp->agent($self->agent);
             $self->debug('LWP instance created');
         }
-        return $ua;
+        return $lwp;
     };
 }
 
