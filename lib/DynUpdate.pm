@@ -121,8 +121,24 @@ sub debug { my ($self, $msg) = @_;
     $self->log(Debug => $msg);
 }
 
+#sub log { my $self = shift;
+#printf "%s [%s] %s\n", time2iso(time), @_;
+#}
+
 sub log { my $self = shift;
-    printf "%s [%s] %s\n", time2iso(time), @_;
+    $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
+}
+
+*log_fh = _log_fh();
+sub _log_fh {
+    my $fh;
+    return sub { my $self = shift;
+        unless ($fh) {
+            -d $self->log_file->parent or $self->log_file->parent->mkpath;
+            open my $fh, '>>', $self->log_file or die;
+        }
+        return $fh;
+    };
 }
 
 __PACKAGE__->meta->make_immutable;
