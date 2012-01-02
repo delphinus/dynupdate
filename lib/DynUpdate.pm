@@ -29,7 +29,7 @@ has offline    => (is => 'ro', isa => 'Str', default  => 'NOCHG');
 has detect_uri => (is => 'ro', isa => 'Str',
     default    => 'http://checkip.dyndns.org/');
 
-has debug      => (is => 'ro', isa => 'Bool', default => 0);
+has debug_flg  => (is => 'ro', isa => 'Bool', default => 0);
 
 sub run { my $self = shift;
     return $self->update;

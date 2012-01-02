@@ -39,8 +39,8 @@ has '+offline'    => (traits => ['Getopt'], cmd_aliases => 'o',
 has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
     documentation => 'url for detecting ip address');
 
-has debug         => (traits => ['Getopt'], cmd_aliases => 'd',
-    documentation => 'debug mode');
+has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
+    cmd_flag    => 'debug', documentation => 'debug mode');
 
 has log_file      => (traits => ['Getopt'], cmd_aliases => 'l',
     documentation => 'log filename',
