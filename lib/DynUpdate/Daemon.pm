@@ -100,7 +100,6 @@ sub _log_fh {
         unless ($fh) {
             -d $self->log_file->parent or $self->log_file->parent->mkpath;
             open my $fh, '>>', $self->log_file or die;
-            $self->debug('log file handle created');
         }
         return $fh;
     };
