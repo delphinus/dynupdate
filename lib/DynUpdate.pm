@@ -121,47 +121,8 @@ sub debug { my ($self, $msg) = @_;
     $self->log(Debug => $msg);
 }
 
-#sub log { my $self = shift;
-#printf "%s [%s] %s\n", time2iso(time), @_;
-#}
-
-use FindBin qw!$Bin!;
-use MooseX::Types::Path::Class qw!File!;
-use File::Basename;
-has log_file      => (
-    is => 'ro', isa => File, coerce => File,
-    default       => sub {
-        my $name = fileparse($0, qr!\.[^.]*!);
-        return "$Bin/logs/$name.log";
-    });
-
-    use YAML;
-use feature qw!say!;
 sub log { my $self = shift;
-    say Dump $self->log_fh;
-    $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
-}
-
-*log_fh = _log_fh();
-sub _log_fh {
-    say 1;
-    my $fh;
-    say 2;
-    return sub { my $self = shift;
-    say 3;
-        unless ($fh) {
-    say 4;
-            -d $self->log_file->parent or $self->log_file->parent->mkpath;
-    say 5;
-    say $fh;
-            open $fh, '>>', $self->log_file or die;
-    say $fh;
-    say 6;
-        }
-    say 7;
-    say $fh;
-        return $fh;
-    };
+    printf "%s [%s] %s\n", time2iso(time), @_;
 }
 
 __PACKAGE__->meta->make_immutable;

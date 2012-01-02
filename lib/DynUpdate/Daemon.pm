@@ -99,7 +99,7 @@ sub _log_fh {
     return sub { my $self = shift;
         unless ($fh) {
             -d $self->log_file->parent or $self->log_file->parent->mkpath;
-            open my $fh, '>>', $self->log_file or die;
+            open $fh, '>>', $self->log_file or die;
         }
         return $fh;
     };
