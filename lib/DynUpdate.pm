@@ -154,7 +154,7 @@ sub _log_fh {
             -d $self->log_file->parent or $self->log_file->parent->mkpath;
     say 5;
     say $fh;
-            open my $fh, '>>', $self->log_file or die;
+            open $fh, '>>', $self->log_file or die;
     say $fh;
     say 6;
         }
