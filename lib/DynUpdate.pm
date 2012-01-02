@@ -136,6 +136,8 @@ has log_file      => (
     });
 
 sub log { my $self = shift;
+    use YAML;
+    say Dump $self->log_fh;
     $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
 }
 
