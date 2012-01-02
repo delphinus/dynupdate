@@ -117,7 +117,7 @@ sub _die { my $self = shift;
 }
 
 sub debug { my ($self, $msg) = @_;
-    $self->debug or return;
+    $self->debug_flg or return;
     $self->log(Debug => $msg);
 }
 
