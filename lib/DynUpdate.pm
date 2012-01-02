@@ -127,6 +127,7 @@ sub debug { my ($self, $msg) = @_;
 
 use FindBin qw!$Bin!;
 use MooseX::Types::Path::Class qw!File!;
+use File::Basename;
 has log_file      => (
     is => 'ro', isa => File, coerce => File,
     default       => sub {
