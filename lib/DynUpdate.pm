@@ -1,5 +1,6 @@
 package DynUpdate;
 use Moose;
+use MooseX::Types::IPv4 qw!ip4!;
 
 use HTTP::Date qw!time2iso!;
 use HTTP::Request;
@@ -19,17 +20,17 @@ has path       => (is => 'ro', default    => '/nic/update');
 has method     => (is => 'ro', default    => 'GET');
 has protocol   => (is => 'ro', default    => 'HTTP/1.0');
 
-has username   => (is => 'ro', isa => 'Str', required => 1);
-has password   => (is => 'ro', isa => 'Str', required => 1);
-has hostname   => (is => 'ro', isa => 'Str', required => 1);
-has wildcard   => (is => 'ro', isa => 'Str', default  => 'NOCHG');
-has mx         => (is => 'ro', isa => 'Str', default  => 'NOCHG');
-has backmx     => (is => 'ro', isa => 'Str', default  => 'NOCHG');
-has offline    => (is => 'ro', isa => 'Str', default  => 'NOCHG');
+has username   => (is => 'ro', isa => 'Str',  required => 1);
+has password   => (is => 'ro', isa => 'Str',  required => 1);
+has hostname   => (is => 'ro', isa => 'Str',  required => 1);
+has wildcard   => (is => 'ro', isa => 'Str',  default  => 'NOCHG');
+has mx         => (is => 'ro', isa => 'Str',  default  => 'NOCHG');
+has backmx     => (is => 'ro', isa => 'Str',  default  => 'NOCHG');
+has offline    => (is => 'ro', isa => 'Str',  default  => 'NOCHG');
 has detect_uri => (is => 'ro', isa => 'Str',
     default    => 'http://checkip.dyndns.org/');
-
 has debug_flg  => (is => 'ro', isa => 'Bool', default => 0);
+has my_ip      => (is => 'rw', isa => ip4,    default => undef);
 
 sub run { my $self = shift;
     return $self->update;
@@ -64,6 +65,8 @@ sub update { my $self = shift;
     my $res = $self->lwp->request($req);
     $res->is_success or return $self->_die($res->status_line);
 
+    $self->debug($res);
+
     my $content = $res->content;
 
     my ($status, $ip_address) = $content =~ /(\w+)(?: (\d+\.\d+\.\d+\.\d+))?/;
@@ -84,6 +87,8 @@ sub update { my $self = shift;
 }
 
 sub get_my_ip { my $self = shift;
+    defined $self->my_ip and return $self->my_ip;
+
     my $res = $self->lwp->get($self->detect_uri);
     $res->is_success or return $self->_die($res->status_line);
 

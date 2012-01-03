@@ -30,7 +30,7 @@ has '+hostname'   => (traits => ['Getopt'], cmd_aliases => 'h',
     documentation => 'hostname to be updated');
 has '+wildcard'   => (traits => ['Getopt'], cmd_aliases => 'w',
     documentation => '(currently ignored)');
-has '+mx'         => (traits => ['Getopt'], cmd_aliases => 'm',
+has '+mx'         => (traits => ['Getopt'], cmd_aliases => 'x',
     documentation => '(currently ignored)');
 has '+backmx'     => (traits => ['Getopt'], cmd_aliases => 'b',
     documentation => '(currently ignored)');
@@ -38,6 +38,8 @@ has '+offline'    => (traits => ['Getopt'], cmd_aliases => 'o',
     documentation => 'set to offline mode');
 has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
     documentation => 'url for detecting ip address');
+has '+my_ip'      => (traits => ['Getopt'], cmd_aliases => 'm',
+    documentation => 'ip address to update');
 has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
 
@@ -57,10 +59,9 @@ has interval      => (traits => ['Getopt'], cmd_aliases => 'i',
     documentation => 'interval seconds between checks',
     is => 'ro', isa => 'Int', default => 900);
 
-has my_ip         => (traits => ['NoGetopt'],
-    is => 'rw', isa => ip4, default  => '0.0.0.0');
-
 sub BUILD { my $self = shift;
+    $self->my_ip and !$self->once
+        and die "--my_ip and --once must be specified together\n";
     -d $self->pidbase or $self->pidbase->mkpath;
 }
 
@@ -82,8 +83,10 @@ override run => sub { my $self = shift;
 
 override update => sub { my $self = shift;
     my $new = $self->get_my_ip;
+    $self->debug(sprintf 'old : %s, new : %s',
+        ($self->my_ip // 'NONE'), $new);
 
-    if ($self->my_ip eq $new) {
+    if (defined $self->my_ip and $self->my_ip eq $new) {
         $self->log(Unchanged => 'ip address has not changed.');
         return 1;
 
