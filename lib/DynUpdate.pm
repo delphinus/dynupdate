@@ -1,6 +1,5 @@
 package DynUpdate;
 use Moose;
-use MooseX::Types::IPv4 qw!ip4!;
 
 use HTTP::Date qw!time2iso!;
 use HTTP::Request;
@@ -30,7 +29,7 @@ has offline    => (is => 'ro', isa => 'Str',  default  => 'NOCHG');
 has detect_uri => (is => 'ro', isa => 'Str',
     default    => 'http://checkip.dyndns.org/');
 has debug_flg  => (is => 'ro', isa => 'Bool', default => 0);
-has my_ip      => (is => 'rw', isa => ip4,    default => '0.0.0.0');
+has my_ip      => (is => 'rw', isa => 'Str');
 
 sub run { my $self = shift;
     return $self->update;
@@ -87,7 +86,7 @@ sub update { my $self = shift;
 }
 
 sub get_my_ip { my $self = shift;
-    $self->my_ip eq '0.0.0.0' or return $self->my_ip;
+    defined $self->my_ip and return $self->my_ip;
 
     my $res = $self->lwp->get($self->detect_uri);
     $res->is_success or return $self->_die($res->status_line);

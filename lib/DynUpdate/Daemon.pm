@@ -1,6 +1,5 @@
 package DynUpdate::Daemon;
 use Moose;
-use MooseX::Types::IPv4 qw!ip4!;
 use MooseX::Types::Path::Class qw!File!;
 
 extends 'DynUpdate';
@@ -60,7 +59,7 @@ has '+offline'    => (traits => ['Getopt'],
     documentation => 'set to offline mode');
 
 sub BUILD { my $self = shift;
-    $self->my_ip ne '0.0.0.0' and !$self->once
+    defined $self->my_ip and !$self->once
         and die "--my_ip and --once must be specified together\n";
     -d $self->pidbase or $self->pidbase->mkpath;
 }
@@ -84,7 +83,7 @@ override run => sub { my $self = shift;
 override update => sub { my $self = shift;
     my $new = $self->get_my_ip;
     $self->debug(sprintf 'old : %s, new : %s',
-        ($self->my_ip eq '0.0.0.0' ? 'NONE' : $self->my_ip), $new);
+        (defined $self->my_ip || 'NONE'), $new);
 
     if ($self->my_ip eq $new) {
         $self->log(Unchanged => 'ip address has not changed.');
