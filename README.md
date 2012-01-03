@@ -45,9 +45,9 @@ Dyn.com アップデートスクリプト
   IP アドレスの確認間隔を指定します。標準値は 15 分です。余り頻繁に確認するとサーバーに負荷がかかるため、[Dyn.com][dyn.com] の確認サービスを利用する場合はこれより低い値に設定しない方が良いようです。  
   もし、独自の確認サービスを用意する場合は、次のようなリプライを返すようにしてください。（以下、[CheckIP Tool - Dyn][checkip] より引用）
 
-    HTTP/1.1 200 OK
-    Content-Type: text/html
-    <html><head><title>Current IP Check</title></head><body>Current IP Address: 123.456.78.90</body></html>
+	HTTP/1.1 200 OK
+	Content-Type: text/html
+	<html><head><title>Current IP Check</title></head><body>Current IP Address: 123.456.78.90</body></html>
 
 * `-m, --my_ip`  
   更新に使用する IP アドレスを確認サービスで得るのではなく、指定した値を使用します。
