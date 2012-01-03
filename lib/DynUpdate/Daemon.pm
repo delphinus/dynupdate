@@ -42,7 +42,8 @@ has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
 
 has once          => (traits => ['Getopt'], cmd_aliases => '1',
-    documentation => 'run once, and exit');
+    documentation => 'run once, and exit',
+    is => 'ro', isa => 'Bool', default => 0);
 
 has log_file      => (traits => ['Getopt'], cmd_aliases => 'l',
     documentation => 'log filename',
