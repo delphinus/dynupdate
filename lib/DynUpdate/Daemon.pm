@@ -28,24 +28,12 @@ has '+password'   => (traits => ['Getopt'], cmd_aliases => 'p',
     documentation => 'password registered in Dyn.com');
 has '+hostname'   => (traits => ['Getopt'], cmd_aliases => 'h',
     documentation => 'hostname to be updated');
-has '+wildcard'   => (traits => ['Getopt'], cmd_aliases => 'w',
-    documentation => '(currently ignored)');
-has '+mx'         => (traits => ['Getopt'], cmd_aliases => 'x',
-    documentation => '(currently ignored)');
-has '+backmx'     => (traits => ['Getopt'], cmd_aliases => 'b',
-    documentation => '(currently ignored)');
-has '+offline'    => (traits => ['Getopt'], cmd_aliases => 'o',
-    documentation => 'set to offline mode');
 has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
     documentation => 'url for detecting ip address');
 has '+my_ip'      => (traits => ['Getopt'], cmd_aliases => 'm',
     documentation => 'ip address to update');
 has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
-
-has once          => (traits => ['Getopt'], cmd_aliases => '1',
-    documentation => 'run once, and exit',
-    is => 'ro', isa => 'Bool', default => 0);
 
 has log_file      => (traits => ['Getopt'], cmd_aliases => 'l',
     documentation => 'log filename',
@@ -58,6 +46,18 @@ has log_file      => (traits => ['Getopt'], cmd_aliases => 'l',
 has interval      => (traits => ['Getopt'], cmd_aliases => 'i',
     documentation => 'interval seconds between checks',
     is => 'ro', isa => 'Int', default => 900);
+
+has once          => (traits => ['Getopt'], cmd_aliases => '1',
+    documentation => 'run once, and exit',
+    is => 'ro', isa => 'Bool', default => 0);
+has '+wildcard'   => (traits => ['Getopt'],
+    documentation => '(currently ignored)');
+has '+mx'         => (traits => ['Getopt'],
+    documentation => '(currently ignored)');
+has '+backmx'     => (traits => ['Getopt'],
+    documentation => '(currently ignored)');
+has '+offline'    => (traits => ['Getopt'],
+    documentation => 'set to offline mode');
 
 sub BUILD { my $self = shift;
     $self->my_ip and !$self->once
