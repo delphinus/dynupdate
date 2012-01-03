@@ -98,7 +98,11 @@ override update => sub { my $self = shift;
 };
 
 override log => sub { my $self = shift;
-    $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
+    if ($self->foreground) {
+        super;
+    } else {
+        $self->log_fh->print(sprintf "%s [%s] %s\n", time2iso(time), @_);
+    }
 };
 
 *log_fh = _log_fh();
