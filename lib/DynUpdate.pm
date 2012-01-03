@@ -86,7 +86,7 @@ sub update { my $self = shift;
 }
 
 sub get_my_ip { my $self = shift;
-    defined $self->my_ip and return $self->my_ip;
+    #defined $self->my_ip and return $self->my_ip;
 
     my $res = $self->lwp->get($self->detect_uri);
     $res->is_success or return $self->_die($res->status_line);
