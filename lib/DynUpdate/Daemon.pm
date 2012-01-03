@@ -41,6 +41,9 @@ has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
 has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
 
+has once          => (traits => ['Getopt'], cmd_aliases => '1',
+    documentation => 'run once, and exit');
+
 has log_file      => (traits => ['Getopt'], cmd_aliases => 'l',
     documentation => 'log filename',
     is => 'ro', isa => File, coerce => File,
@@ -70,6 +73,8 @@ after start => sub { my $self = shift;
 override run => sub { my $self = shift;
     while (1) {
         super;
+        $self->once and last;
+        $self->debug('sleeping...');
         sleep $self->interval;
     }
 };
