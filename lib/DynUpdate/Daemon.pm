@@ -60,7 +60,7 @@ has '+offline'    => (traits => ['Getopt'],
     documentation => 'set to offline mode');
 
 sub BUILD { my $self = shift;
-    $self->my_ip and !$self->once
+    $self->my_ip ne '0.0.0.0' and !$self->once
         and die "--my_ip and --once must be specified together\n";
     -d $self->pidbase or $self->pidbase->mkpath;
 }
@@ -84,9 +84,9 @@ override run => sub { my $self = shift;
 override update => sub { my $self = shift;
     my $new = $self->get_my_ip;
     $self->debug(sprintf 'old : %s, new : %s',
-        (defined $self->my_ip || 'NONE'), $new);
+        ($self->my_ip eq '0.0.0.0' ? 'NONE' : $self->my_ip), $new);
 
-    if (defined $self->my_ip and $self->my_ip eq $new) {
+    if ($self->my_ip eq $new) {
         $self->log(Unchanged => 'ip address has not changed.');
         return 1;
 
