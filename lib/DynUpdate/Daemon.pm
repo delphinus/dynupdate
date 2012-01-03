@@ -84,7 +84,7 @@ override run => sub { my $self = shift;
 override update => sub { my $self = shift;
     my $new = $self->get_my_ip;
     $self->debug(sprintf 'old : %s, new : %s',
-        ($self->my_ip // 'NONE'), $new);
+        (defined $self->my_ip || 'NONE'), $new);
 
     if (defined $self->my_ip and $self->my_ip eq $new) {
         $self->log(Unchanged => 'ip address has not changed.');
