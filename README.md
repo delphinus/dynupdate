@@ -15,7 +15,7 @@ Dyn.com アップデートスクリプト
 * デフォルトではバックグラウンドで動作しますが、`-f, --forground` オプションを付けるとフォアグラウンドで動作し、標準出力にログを吐きます。
 * `-1, --once` オプションを付けると一度だけ確認 & 更新を行って終了します。__（実験的機能）__
 
-### 例 2
+### 例
 
     dynupdate -u delphinus35 -p some_pass -h test.remora.cx -i 3600 -u http://detect.example.com/ restart
 
@@ -31,17 +31,17 @@ Dyn.com アップデートスクリプト
 
 ### 必須オプション
 
-* `-u, --username`
-* `-p, --password`
-* `-h, --hostname`
+* `-u, --username`  
+  `-p, --password`  
+  `-h, --hostname`  
   [Dyn.com][dyn.com] で登録したユーザー名・パスワード・ホスト名です。
 
 ### 必須でないオプション
 
-* `-u, --detect_uri Default : http://checkip.dyndns.org/`
+* `-u, --detect_uri Default : http://checkip.dyndns.org/`  
   IP アドレスの確認に使用する URL です。標準では [Dyn.com][dyn.com] が提供するサービスを使用します。
 
-* `-i, --interval Default : 900`
+* `-i, --interval Default : 900`  
   IP アドレスの確認間隔を指定します。標準値は 15 分です。余り頻繁に確認するとサーバーに負荷がかかるため、[Dyn.com][dyn.com] の確認サービスを利用する場合はこれより低い値に設定しない方が良いようです。  
   もし、独自の確認サービスを用意する場合は、次のようなリプライを返すようにしてください。（以下、[CheckIP Tool - Dyn][checkip] より引用）
 
@@ -49,27 +49,27 @@ Dyn.com アップデートスクリプト
 > `Content-Type: text/html`
 > `<html><head><title>Current IP Check</title></head><body>Current IP Address: 123.456.78.90</body></html>`
 
-* `-m, --my_ip`
+* `-m, --my_ip`  
   更新に使用する IP アドレスを確認サービスで得るのではなく、指定した値を使用します。
 
-* `-l, --log_file Default : ./logs/dynupdate.log`
+* `-l, --log_file Default : ./logs/dynupdate.log`  
   ログファイル名を指定します。
 
-* `--pidbase Default : ./run`
+* `--pidbase Default : ./run`  
   デーモンの pid ファイルを置くディレクトリを指定します。
 
-* `-d, --debug`
+* `-d, --debug`  
   デバッグメッセージを出力します。
 
 ### 実験的なオプション
 
-* `-1, --once`
+* `-1, --once`  
   一度だけ IP アドレスの更新処理を実行して終了します。
 
 * `--wildcard`  
   `--mx`  
   `--backmx`  
-  `--offline`
+  `--offline`  
   様々なレコードを更新できますが、[Dyn.com][dyn.com] で未実装のものも有るようで検証はできていません。
 
 [dyn.com]: http://dyn.com/ "Managed DNS | Email Delivery | SMTP | Domain Registration"
