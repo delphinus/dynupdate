@@ -9,7 +9,7 @@ use Path::Class;
 use URI;
 use YAML qw!Dump!;
 
-our $VERSION = '0.4.2012010201';
+our $VERSION = '0.5.2012010301';
 
 has agent      => (is => 'ro',
     default    => "delphinus\@remora.cx - dynupdate.pl - $VERSION");
