@@ -9,4 +9,5 @@ DynUpdate->new(
     username => 'username',
     password => 'password',
     hostname => 'myhost',
+    debug_flg => 1,
 )->run;
