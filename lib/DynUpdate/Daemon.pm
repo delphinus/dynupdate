@@ -91,7 +91,7 @@ override update => sub { my $self = shift;
     } else {
         $new = $self->get_my_ip;
         $self->debug(sprintf 'old : %s, new : %s',
-            (defined $self->my_ip || 'NONE'), $new);
+            ($self->my_ip || 'NONE'), $new);
     }
 
     if ($self->my_ip eq $new) {
