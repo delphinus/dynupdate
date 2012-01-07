@@ -9,7 +9,7 @@ use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
 
-our $VERSION = '0.5.2012010301';
+our $VERSION = '0.5.2012010701';
 
 has [qw!
     +ignore_zombies +no_double_fork +progname +basedir
