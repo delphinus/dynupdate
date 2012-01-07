@@ -29,8 +29,6 @@ has '+hostname'   => (traits => ['Getopt'], cmd_aliases => 'h',
     documentation => 'hostname to be updated');
 has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
     documentation => 'url for detecting ip address');
-has '+my_ip'      => (traits => ['Getopt'], cmd_aliases => 'm',
-    documentation => 'ip address to update');
 has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
 
@@ -46,9 +44,13 @@ has interval      => (traits => ['Getopt'], cmd_aliases => 'i',
     documentation => 'interval seconds between checks',
     is => 'ro', isa => 'Int', default => 900);
 
+has my_ip         => (traits => ['Getopt'], cmd_aliases => 'm',
+    documentation => 'ip address to update',
+	is => 'rw', isa => 'Str');
 has once          => (traits => ['Getopt'], cmd_aliases => '1',
     documentation => 'run once, and exit',
     is => 'ro', isa => 'Bool', default => 0);
+
 has '+wildcard'   => (traits => ['Getopt'],
     documentation => '(currently ignored)');
 has '+mx'         => (traits => ['Getopt'],
@@ -81,9 +83,16 @@ override run => sub { my $self = shift;
 };
 
 override update => sub { my $self = shift;
-    my $new = $self->get_my_ip;
-    $self->debug(sprintf 'old : %s, new : %s',
-        (defined $self->my_ip || 'NONE'), $new);
+    my $new;
+
+    if ($self->once) {
+        $new = $self->my_ip;
+        $self->debug("new IP Address : $new");
+    } else {
+        $new = $self->get_my_ip;
+        $self->debug(sprintf 'old : %s, new : %s',
+            (defined $self->my_ip || 'NONE'), $new);
+    }
 
     if ($self->my_ip eq $new) {
         $self->log(Unchanged => 'ip address has not changed.');
@@ -104,7 +113,10 @@ override log => sub { my $self = shift;
     }
 };
 
-*log_fh = _log_fh();
+{
+    no warnings 'once';
+    *log_fh = _log_fh();
+}
 sub _log_fh {
     my $fh;
     return sub { my $self = shift;
