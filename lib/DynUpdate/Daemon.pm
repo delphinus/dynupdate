@@ -9,7 +9,7 @@ use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
 
-our $VERSION = '0.5.2012010301';
+our $VERSION = '0.5.2012010801';
 
 has [qw!
     +ignore_zombies +no_double_fork +progname +basedir
@@ -21,13 +21,13 @@ has [qw!
 has '+pidbase'    => (documentation => 'path to pidfile dir');
 has '+foreground' => (documentation => 'foreground execution');
 
-has '+username'   => (traits => ['Getopt'], cmd_aliases => 'n',
+has '+username'   => (traits => ['Getopt'], cmd_aliases => 'u',
     documentation => 'username registered in Dyn.com');
 has '+password'   => (traits => ['Getopt'], cmd_aliases => 'p',
     documentation => 'password registered in Dyn.com');
-has '+hostname'   => (traits => ['Getopt'], cmd_aliases => 'h',
+has '+hostname'   => (traits => ['Getopt'], cmd_aliases => 'n',
     documentation => 'hostname to be updated');
-has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'u',
+has '+detect_uri' => (traits => ['Getopt'], cmd_aliases => 'e',
     documentation => 'url for detecting ip address');
 has '+debug_flg'  => (traits => ['Getopt'], cmd_aliases => 'd',
     cmd_flag    => 'debug', documentation => 'debug mode');
@@ -46,7 +46,7 @@ has interval      => (traits => ['Getopt'], cmd_aliases => 'i',
 
 has my_ip         => (traits => ['Getopt'], cmd_aliases => 'm',
     documentation => 'ip address to update',
-	is => 'rw', isa => 'Str');
+    is => 'rw', isa => 'Str');
 has once          => (traits => ['Getopt'], cmd_aliases => '1',
     documentation => 'run once, and exit',
     is => 'ro', isa => 'Bool', default => 0);
