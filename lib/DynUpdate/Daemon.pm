@@ -5,6 +5,8 @@ use MooseX::Types::Path::Class qw!File!;
 extends 'DynUpdate';
 with 'MooseX::Daemonize';
 
+use DynUpdate::Constants;
+
 use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
@@ -96,7 +98,7 @@ override update => sub { my $self = shift;
 
     if ($self->my_ip eq $new) {
         $self->log(Unchanged => 'ip address has not changed.');
-        return 1;
+        return $UPDATE_UNNEEDED;
 
     } else {
         $self->log(Changed => 'ip address needs to be updated.');

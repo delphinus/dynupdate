@@ -1,6 +1,8 @@
 package DynUpdate;
 use Moose;
 
+use DynUpdate::Constants;
+
 use HTTP::Date qw!time2iso!;
 use HTTP::Request;
 use LWP::UserAgent;
@@ -35,7 +37,7 @@ sub run { my $self = shift;
 }
 
 sub update { my $self = shift;
-    my $ip = $self->get_my_ip or return;
+    my $ip = $self->get_my_ip or return $UPDATE_FAILED;
 
     my $uri = URI->new;
     $uri->scheme($self->scheme);
@@ -74,15 +76,15 @@ sub update { my $self = shift;
     if ($status eq 'good') {
         $self->log(Success =>
             "ip address has been updated successfully. => $ip_address");
-        return 1;
+        return $UPDATE_SUCCESS;
 
     } elsif ($status eq 'nochg') {
         $self->log(Success => 'ip address does not need to be updated.');
-        return 1;
+        return $UPDATE_NOCHG;
 
     } else {
         $self->log(Failed => "ip address update failed. => '$content'");
-        return 0;
+        return $UPDATE_FAILED;
     }
 }
 
