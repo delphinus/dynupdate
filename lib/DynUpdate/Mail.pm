@@ -6,10 +6,10 @@ use MIME::Entity;
 #use Net::SMTP::SSL;
 use Net::SMTP;
 
-#has username => (is => 'ro', isa => 'Str', required => 1);
-#has password => (is => 'ro', isa => 'Str', required => 1);
+has username => (is => 'ro', isa => 'Str', required => 1);
+has password => (is => 'ro', isa => 'Str', required => 1);
 has server   => (is => 'ro', isa => 'Str', required => 1);
-has port     => (is => 'ro', isa => 'Int', default  => 25);
+has port     => (is => 'ro', isa => 'Int', required => 1);
 has from     => (is => 'ro', isa => 'Str', required => 1);
 has to       => (is => 'ro', isa => 'Str', required => 1);
 has subject  => (is => 'ro', isa => 'Str', required => 1);

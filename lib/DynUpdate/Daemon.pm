@@ -65,12 +65,12 @@ has '+offline'    => (traits => ['Getopt'],
     documentation => 'set to offline mode');
 
 has mail          => (is => 'ro', isa => 'Bool', default => 0);
-has mail_username => (is => 'ro', isa => 'Str');
-has mail_password => (is => 'ro', isa => 'Str');
-has mail_server   => (is => 'ro', isa => 'Str');
-has mail_port     => (is => 'ro', isa => 'Int');
-has mail_from     => (is => 'ro', isa => 'Str');
-has mail_to       => (is => 'ro', isa => 'Str');
+has mail_username => (is => 'ro', isa => 'Str',  default => '');
+has mail_password => (is => 'ro', isa => 'Str',  default => '');
+has mail_server   => (is => 'ro', isa => 'Str',  default => '');
+has mail_port     => (is => 'ro', isa => 'Int',  default => 25);
+has mail_from     => (is => 'ro', isa => 'Str',  default => '');
+has mail_to       => (is => 'ro', isa => 'Str',  default => '');
 
 sub BUILD { my $self = shift;
     defined $self->my_ip and !$self->once
