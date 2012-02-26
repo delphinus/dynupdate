@@ -34,8 +34,8 @@ sub send { my $self = shift;
     my $mime = MIME::Entity->build(%mail);
     print $mime->stringify;
 
-    #my $s = Net::SMTP::SSL->new($self->server, Port => $self->port, Debug => 1);
-    my $s = Net::SMTP->new($self->server, Port => $self->port, Debug => 1);
+    #my $s = Net::SMTP::SSL->new($self->server, Port => $self->port);
+    my $s = Net::SMTP->new($self->server, Port => $self->port);
     #$s->auth($self->username, $self->password);
     $s->mail($mail{From});
     $s->to($mail{To});
