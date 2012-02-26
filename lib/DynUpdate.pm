@@ -35,6 +35,8 @@ sub run { my $self = shift;
 }
 
 sub update { my $self = shift;
+    my $ip = $self->get_my_ip or return;
+
     my $uri = URI->new;
     $uri->scheme($self->scheme);
     $uri->host($self->host);
@@ -116,6 +118,7 @@ sub _lwp {
 
 sub _die { my $self = shift;
     $self->log(Error => shift);
+    return;
 }
 
 sub debug { my ($self, $msg) = @_;
