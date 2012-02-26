@@ -120,7 +120,7 @@ sub _lwp {
 
 sub _die { my $self = shift;
     $self->log(Error => shift);
-    return;
+    return $UPDATE_FAILED;
 }
 
 sub debug { my ($self, $msg) = @_;
