@@ -64,13 +64,27 @@ has '+backmx'     => (traits => ['Getopt'],
 has '+offline'    => (traits => ['Getopt'],
     documentation => 'set to offline mode');
 
-has mail          => (is => 'ro', isa => 'Bool', default => 0);
-has mail_username => (is => 'ro', isa => 'Str',  default => '');
-has mail_password => (is => 'ro', isa => 'Str',  default => '');
-has mail_server   => (is => 'ro', isa => 'Str',  default => '');
-has mail_port     => (is => 'ro', isa => 'Int',  default => 25);
-has mail_from     => (is => 'ro', isa => 'Str',  default => '');
-has mail_to       => (is => 'ro', isa => 'Str',  default => '');
+has mail          => (traits => ['Getopt'],
+    documentation => 'send mail when started and ip address changed',
+    is => 'ro', isa => 'Bool', default => 0);
+has mail_username => (traits => ['Getopt'],
+    documentation => 'username for SMTP Auth (currently ignored)',
+    is => 'ro', isa => 'Str',  default => '');
+has mail_password => (traits => ['Getopt'],
+    documentation => 'password for SMTP Auth (currently ignored)',
+    is => 'ro', isa => 'Str',  default => '');
+has mail_server   => (traits => ['Getopt'],
+    documentation => 'SMTP server name',
+    is => 'ro', isa => 'Str',  default => '');
+has mail_port     => (traits => ['Getopt'],
+    documentation => 'SMTP port number (default 25)',
+    is => 'ro', isa => 'Int',  default => 25);
+has mail_from     => (traits => ['Getopt'],
+    documentation => 'mail From:',
+    is => 'ro', isa => 'Str',  default => '');
+has mail_to       => (traits => ['Getopt'],
+    documentation => 'mail To:',
+    is => 'ro', isa => 'Str',  default => '');
 
 sub BUILD { my $self = shift;
     defined $self->my_ip and !$self->once

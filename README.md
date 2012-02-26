@@ -77,6 +77,15 @@ Content-Type: text/html
   `--offline`  
   様々なレコードを更新できますが、[Dyn.com][dyn.com] で未実装のものも有るようで検証はできていません。
 
+* `--mail`  
+  デーモンの開始時、及び、IP アドレスが変更されたときに、指定されたメールアドレスに通知します。このオプションをオンにすると、以下のオプションが有効になります。現在のところ、認証のかかっていないメールサーバーのみに対応しています。
+
+* `--mail_server`  
+  `--mail_port`  
+  `--mail_from`  
+  `--mail_to`  
+  それぞれ、SMTP サーバ名、ポート番号、送り主、宛先です。
+
 [dyn.com]: http://dyn.com/ "Managed DNS | Email Delivery | SMTP | Domain Registration"
 [ddclient]: http://sourceforge.net/apps/trac/ddclient "ddclient"
 [checkip]: http://dyn.com/support/developers/checkip-tool/ "CheckIP Tool - Dyn"
