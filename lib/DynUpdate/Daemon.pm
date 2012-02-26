@@ -121,7 +121,7 @@ override update => sub { my $self = shift;
         $new = $self->my_ip;
         $self->debug("new IP Address : $new");
     } else {
-        $new = $self->get_my_ip;
+        $new = $self->get_my_ip or return $UPDATE_FAILED;
         $self->debug(sprintf 'old : %s, new : %s',
             ($self->my_ip || 'NONE'), $new);
     }
