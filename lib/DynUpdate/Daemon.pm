@@ -6,6 +6,7 @@ extends 'DynUpdate';
 with 'MooseX::Daemonize';
 
 use DynUpdate::Constants;
+use DynUpdate::Mail;
 
 use File::Basename;
 use FindBin qw!$Bin!;
@@ -103,7 +104,14 @@ override update => sub { my $self = shift;
     } else {
         $self->log(Changed => 'ip address needs to be updated.');
         $self->my_ip($new);
-        return super;
+        my $v = super;
+        if ($v == $UPDATE_SUCCESS) {
+            my $mail = DynUpdate::Mail->new(
+                hostname => $self->hostname,
+            );
+            $mail->send;
+        }
+        return $v;
     }
 };
 
