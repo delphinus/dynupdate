@@ -8,6 +8,7 @@ with 'MooseX::Daemonize';
 use DynUpdate::Constants;
 use DynUpdate::Mail;
 
+use utf8;
 use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
@@ -16,7 +17,7 @@ our $VERSION = '0.5.2012010801';
 
 has [qw!
     +ignore_zombies +no_double_fork +progname +basedir
-    +stop_timeout   +pidfile        +agent    +dont_close_all_files 
+    +stop_timeout   +pidfile        +agent    +dont_close_all_files
     +scheme         +host           +path     +method
     +protocol
 !] => (traits => ['NoGetopt']);
@@ -63,6 +64,14 @@ has '+backmx'     => (traits => ['Getopt'],
 has '+offline'    => (traits => ['Getopt'],
     documentation => 'set to offline mode');
 
+has mail          => (is => 'ro', isa => 'Bool', default => 0);
+has mail_username => (is => 'ro', isa => 'Str');
+has mail_password => (is => 'ro', isa => 'Str');
+has mail_server   => (is => 'ro', isa => 'Str');
+has mail_port     => (is => 'ro', isa => 'Int');
+has mail_from     => (is => 'ro', isa => 'Str');
+has mail_to       => (is => 'ro', isa => 'Str');
+
 sub BUILD { my $self = shift;
     defined $self->my_ip and !$self->once
         and die "--my_ip and --once must be specified together\n";
@@ -73,6 +82,12 @@ after start => sub { my $self = shift;
     $self->is_daemon or return;
 
     $self->log(Info => 'START!');
+    $self->mail_send('[DynUpdate] 開始しました',
+        sprintf <<EOM, $self->hostname);
+監視を開始しました
+
+サーバー : %s
+EOM
     $self->run;
 };
 
@@ -106,10 +121,14 @@ override update => sub { my $self = shift;
         $self->my_ip($new);
         my $v = super;
         if ($v == $UPDATE_SUCCESS) {
-            my $mail = DynUpdate::Mail->new(
-                hostname => $self->hostname,
-            );
-            $mail->send;
+            my $subject = sprintf '[%s] IP アドレスが変更されました', $new;
+            my $data = sprintf <<EOM, $self->hostname, $new;
+IP アドレスが次のように変更されました。
+
+ホスト名 : %s
+IP アドレス : %s
+EOM
+            $self->mail_send($subject, $data);
         }
         return $v;
     }
@@ -137,6 +156,25 @@ sub _log_fh {
         }
         return $fh;
     };
+}
+
+sub mail_send { my $self = shift;
+    return unless $self->mail;
+
+    my ($subject, $data) = @_;
+
+    my $mail = DynUpdate::Mail->new(
+        username => $self->mail_username,
+        password => $self->mail_password,
+        server   => $self->mail_server,
+        port     => $self->mail_port,
+        from     => $self->mail_from,
+        to       => $self->mail_to,
+        subject  => $subject,
+        data     => $data,
+    );
+
+    $mail->send;
 }
 
 __PACKAGE__->meta->make_immutable;
