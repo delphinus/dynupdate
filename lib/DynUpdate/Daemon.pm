@@ -12,6 +12,7 @@ use utf8;
 use File::Basename;
 use FindBin qw!$Bin!;
 use HTTP::Date qw!time2iso!;
+use Try::Tiny;
 
 our $VERSION = '0.5.2012010801';
 
@@ -188,7 +189,11 @@ sub mail_send { my $self = shift;
         data     => $data,
     );
 
-    $mail->send;
+    try {
+        $mail->send;
+    } catch {
+        $self->log(Warn => $_);
+    };
 }
 
 __PACKAGE__->meta->make_immutable;
