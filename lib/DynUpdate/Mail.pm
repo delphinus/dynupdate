@@ -4,14 +4,13 @@ use Moose;
 use Email::MIME;
 use Email::MIME::Creator::ISO_2022_JP;
 use Email::Sender::Simple qw!sendmail!;
-use Email::Sender::Transport::SMTP;
+use Email::Sender::Transport::SMTP::TLS;
 use Try::Tiny;
 
 has username => (is => 'ro', isa => 'Str');
 has password => (is => 'ro', isa => 'Str');
-has ssl      => (is => 'ro', isa => 'Bool');
 has server   => (is => 'ro', isa => 'Str', required => 1);
-has port     => (is => 'ro', isa => 'Int');
+has port     => (is => 'ro', isa => 'Int', default => 587);
 has from     => (is => 'ro', isa => 'Str', required => 1);
 has to       => (is => 'ro', isa => 'Str', required => 1);
 has subject  => (is => 'ro', isa => 'Str', required => 1);
@@ -29,12 +28,11 @@ sub send { my $self = shift;
         body_str => $self->data,
     );
 
-    my $transport = Email::Sender::Transport::SMTP->new(
+    my $transport = Email::Sender::Transport::SMTP::TLS->new(
         host => $self->server,
         port => $self->port,
-        ssl  => $self->ssl,
-        sasl_username => $self->username,
-        sasl_password => $self->password,
+        username => $self->username,
+        password => $self->password,
     );
 
     try {
