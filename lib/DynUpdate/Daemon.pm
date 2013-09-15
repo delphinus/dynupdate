@@ -122,9 +122,21 @@ override update => sub { my $self = shift;
         $new = $self->my_ip;
         $self->debug("new IP Address : $new");
     } else {
-        $new = $self->get_my_ip or return $UPDATE_FAILED;
-        $self->debug(sprintf 'old : %s, new : %s',
-            ($self->my_ip || 'NONE'), $new);
+        $new = $self->get_my_ip;
+        if ($new == $UPDATE_FAILED) {
+            my $subject = '[FAILED] IP アドレスが取得できませんでした';
+            my $data = sprintf <<EOM, $self->detect_uri;
+IP アドレスの取得に失敗しました。
+
+detect_uri: %s
+EOM
+            $self->mail_send($subject, $data);
+
+            return $UPDATE_FAILED;
+        } else {
+            $self->debug(sprintf 'old : %s, new : %s',
+                ($self->my_ip || 'NONE'), $new);
+        }
     }
 
     if ($self->my_ip eq $new) {
